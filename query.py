@@ -27,15 +27,16 @@ class PrivateQuery():
         return
 
 
-    def count(self, col_name):
-        """Returns a differentially private count of the values in the row
+    def count(self):
+        """Returns a differentially private count of rows in the database
         
         Parameters
         ----------
         col_name : str
             The name of the column whose values is to be counted
         """
-    
+        return len(self.dataset) + self.get_noise()
+
     def get_noise(self):
         """Returns Laplacian noise based on the created epsilon value
         """
@@ -71,3 +72,11 @@ class PrivateQuery():
         col_name : str
             Name of column for whose average is to be calculated
         """
+        # Create 
+        sum = 0
+        for i in range(len(self.dataset)):
+            sum += self.dataset.iloc[i][col_name]
+        
+        avg = sum/len(self.dataset)
+
+        return (avg + self.get_noise())
