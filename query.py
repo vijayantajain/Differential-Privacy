@@ -19,12 +19,19 @@ class PrivateQuery():
     def __init__(self, path_to_dataset, epsilon, names):
         self.dataset = pd.read_csv(path_to_dataset, names=names, index_col=False)
         self.epsilon = epsilon
-        self.preprocess()
+        self.cont_col, self.cat.col = self.preprocess()
     
-    def preprocess(self):
-        """Preprocesses the dataset and calculates some values
+    def preprocess(self, max_card=20, dep_var=None):
         """
-        return
+        Helper function that returns column names of cont and cat variables from given df.
+        Copied from https://github.com/fastai/fastai/blob/master/fastai/tabular/transform.py
+        """
+        cont_names, cat_names = [], []
+        for label in self.dataset:
+            if label == dep_var: continue
+            if self.dataset[label].dtype == int and self.dataset[label].unique().shape[0] > max_card or self.dataset[label].dtype == float: cont_names.append(label)
+            else: cat_names.append(label)
+        return cont_names, cat_names
 
 
     def count(self):
