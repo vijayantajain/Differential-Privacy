@@ -7,28 +7,29 @@ epsilon = 0.5
 names = ['age', 'workclass', 'fnlwgt', 'education', 'education-num',
          'marital-status', 'occupation', 'relationship', 'race', 'sex',
          'capital-gain', 'capital-loss', 'hours-per-week', 'native-country', 'salary']
+use_laplace = True
 
 # Create `PrivateQuery` object
 print("------------------------------------")
 print("Creating PrivateQuery Object")
-query = PrivateQuery(dataset_path, epsilon, names)
+query = PrivateQuery(dataset_path, epsilon, names, use_laplace=False, demo_mode=True)
 print(query.dataset.head())
 print("------------------------------------")
 
-# Test the categorical count method for the education column. 
+# Test the categorical count method for the education column.
 # Note this is for a column with categorical values
 col_name = 'education'
-education_cat_values = [' Bachelors', ' Some-college', ' 11th', ' HS-grad', ' Prof-school', ' Assoc-acdm', ' Assoc-voc', ' 9th', ' 7th-8th', ' 12th', ' Masters', ' 1st-4th', ' 10th', ' Doctorate', ' 5th-6th', ' Preschool']
 print("Counting the education levels in the dataset")
-result = query.categorical_count(col_name, education_cat_values)
-for keys in result.keys():
-    print("{}: {}".format(keys, result[keys]))
+result, dif_pri_result = query.categorical_count(col_name)
+for res_key, dif_pri_key in zip(result.keys(), dif_pri_result.keys()):
+    print("{}: {} | {}: {}\n".format(res_key, result[res_key], dif_pri_key, dif_pri_result[dif_pri_key]))
 print("------------------------------------")
 
 # Test the average method for age column.
 # Note this is for a column with continuous values
 col_name = 'age'
 print("Calculating the average age")
-result = query.average(col_name=col_name)
-print("The average age is : {}".format(result))
+result, dif_pri_result = query.average(col_name=col_name)
+print("The actual average age is : {}".format(result))
+print("The differentially private average is : {}".format(dif_pri_result))
 print("------------------------------------")
